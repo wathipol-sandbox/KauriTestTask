@@ -1,3 +1,4 @@
+import traceback
 import asyncio
 import time
 from websockets.exceptions import ConnectionClosed
@@ -52,8 +53,12 @@ async def connect_to_currency_listener(
                     (time.time() - connected_timestamp
                         ) >= config.WEBSOCKET_UPDATER_CONNECTION_TIMEOUT_LIMIT):
                 break
-            data = await response_getter.get()
-            await websocket.send_json(data.model_dump())
+            try:
+                data = await response_getter.get()
+            except Exception as e:
+                logger.error(traceback.format_exc())
+            else:
+                await websocket.send_json(data.model_dump())
             await asyncio.sleep(current_frequency_timeout)
     except (ConnectionClosed, WebSocketDisconnect):
         pass

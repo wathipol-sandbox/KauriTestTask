@@ -37,7 +37,7 @@ class ScraperManagerGetter:
             data = [data]
         
         # Update atemp
-        if (len(data) == 0 or (len(data) == 1 and data[0]).currency_rate is None
+        if (len(data) == 0 or (len(data) == 1 and data[0].currency_rate is None)
                 ) and self.update_atemp_if_not_exist is True:
             if skip_update_atemp is True:
                 logger.info("{}: {} not found in {} exchange, update atemp Failed!".format(

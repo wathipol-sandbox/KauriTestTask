@@ -11,7 +11,7 @@ from currencyexplorer.core.exchangers_scraping import (
 
 class BinanceExchangerCurrencyScraper(
     AbstractExchangerScraper,
-    EXCHANGER_UNIQ_NAME="binance", DEFAULT_LISTNER_TIMEOUT=1, LISTNER_AUTO_START=True):
+    EXCHANGER_UNIQ_NAME="binance", DEFAULT_LISTNER_TIMEOUT=0, LISTNER_AUTO_START=True):
 
     async def _ticker_response_to_data_list(
             self,
@@ -56,12 +56,15 @@ class BinanceExchangerCurrencyScraper(
         swap_price = False
         if pair_title is not None:
             pair_list = str(pair_title).split("_")
-            kwargs["s"] = "".join(
+            kwargs["symbol"] = "".join(
                 (pair_list[1], pair_list[0],) if pair_list[0] == "USDT" else pair_list)
             swap_price = pair_list[0] == "USDT"
         ticker_data = await binance_async_client.get_ticker(**kwargs)
         return await self._ticker_response_to_data_list(
-            ticker_data, swap_price=swap_price, pair_title=pair_title)
+            ticker_data,
+            swap_price=swap_price,
+            pair_title=pair_title,
+            message_title_mapping={}, use_binance_average_price=False)
 
     async def attach_currency_listener(
             self, *args,
@@ -76,8 +79,9 @@ class BinanceExchangerCurrencyScraper(
             while not self._worker_stop_signal:
                 if isinstance(max_update_iteration, int) and max_update_iteration is not None:
                     current_iteration_count += 1
-                await asyncio.sleep(
-                    delay_seconds if delay_seconds is not None else self.DEFAULT_LISTNER_TIMEOUT)
+                if self.DEFAULT_LISTNER_TIMEOUT != 0:
+                    await asyncio.sleep(
+                        delay_seconds if delay_seconds is not None else self.DEFAULT_LISTNER_TIMEOUT)
                 ticker_data = await tscm.recv()
                 data = await self._ticker_response_to_data_list(
                     ticker_data,
