@@ -37,11 +37,6 @@ class ScraperStorageBackendPairData(BaseModel):
     @field_validator('currency_pair_title', mode="before")
     @classmethod
     def check_currency_pair_title(cls, v: str) -> str:
-        try:
-            ExplorerPairInvalidFormatException.explorer_pair_format_validator(v)
-        except:
-            logger.info("LOOOL: {}".format(v))
-            raise ValueError("lol")
         return ExplorerPairInvalidFormatException.explorer_pair_format_validator(v)
         
 

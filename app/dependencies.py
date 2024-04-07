@@ -23,7 +23,6 @@ async def validate_ws_auth_api_token(authorization: str | None = Header(...)):
     """
         FastAPI Depend for HEADER api token basic auth validation in WebSocket connection
     """
-    logger.info("AUTH: {}".format(authorization))
     if authorization is None:
         raise WebSocketException(code=status.HTTP_401_UNAUTHORIZED)
     scheme, _, param = str(authorization).partition(" ")
