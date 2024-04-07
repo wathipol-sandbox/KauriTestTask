@@ -1,0 +1,13 @@
+*.pyc
+*.pyo
+*.env
+*.env.ngrok
+**/__pycache__/
+*.DS_Store
+**/.DS_Store
+**/venv
+test.py
+.logs
+.coverage
+.pytest.xml
+poetry.lock

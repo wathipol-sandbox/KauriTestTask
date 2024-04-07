@@ -1,0 +1,21 @@
+#############################################
+# currency explorer PROD container #
+#############################################
+FROM tiangolo/uvicorn-gunicorn:python3.11-slim
+
+
+COPY ${PWD}/pyproject.toml ./pyproject.toml
+RUN pip install --upgrade pip
+RUN pip install poetry==1.4.2
+RUN poetry config virtualenvs.create false
+RUN poetry install --without dev --no-root
+#RUN pip install --force-reinstall  email-validator==2.0.0
+
+ARG ENVIRONMENT="PROD"
+ARG PORT
+
+ENV PYTHONPATH "${PYTHONPATH}:/app"
+ENV ENVIRONMENT="PROD"
+
+
+CMD uvicorn currencyexplorer.main:app --host 0.0.0.0 --port ${PORT} --reload
