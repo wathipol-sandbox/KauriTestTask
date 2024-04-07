@@ -1,7 +1,8 @@
-from loguru import logger
 import time
+from loguru import logger
+from collections import defaultdict
 from datetime import datetime
-from typing import Optional, Union, Dict
+from typing import Optional, Union, Dict, Callable, List
 from pydantic import BaseModel, Field, field_validator
 from .exceptions import ExplorerPairInvalidFormatException
 from abc import ABC, abstractmethod
@@ -23,10 +24,24 @@ class ScraperStorageBackendPairData(BaseModel):
                 If last_update is None this methos also return NoneType
         """
         return None if self.last_update is None else datetime.fromtimestamp(self.last_update)
+    
+    @property
+    def time_from_last_update(self) -> Optional[float]:
+        """ Time that has passed since the data was updated.
+                Return NoneType if data is empty
+        """
+        if self.last_update is None:
+            return
+        return time.time() - self.last_update
 
     @field_validator('currency_pair_title', mode="before")
     @classmethod
     def check_currency_pair_title(cls, v: str) -> str:
+        try:
+            ExplorerPairInvalidFormatException.explorer_pair_format_validator(v)
+        except:
+            logger.info("LOOOL: {}".format(v))
+            raise ValueError("lol")
         return ExplorerPairInvalidFormatException.explorer_pair_format_validator(v)
         
 
@@ -80,11 +95,25 @@ class CurrencyScraperAsyncSafeDictStorage(AbstractScraperStorageBackend):
             !!! Only for testing or local usage (FakeDB) !!!
     """
     
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, stored_data_lifetime: Optional[float] = None, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.stored_data_lifetime = stored_data_lifetime
 
         # {exchanger_uniq_name: {pair_title: ScraperStorageBackendPairData } }
         self.__fake_dict_storage: Dict[str, Dict[str, ScraperStorageBackendPairData]] = dict()
+          
+    async def _cleanup_expired_data(self) -> None:
+        """
+            Cleans up expired data from the internal storage dictionary 
+        """
+        if self.stored_data_lifetime is None:
+            return
+        for exchanger_name, exchanger_data in self.__fake_dict_storage.items():
+            for pair_title, pair_data in list(exchanger_data.items()):
+                if self.stored_data_lifetime == 0 or (
+                        self.stored_data_lifetime is not None and (
+                            pair_data.time_from_last_update >= self.stored_data_lifetime)):
+                    del self.__fake_dict_storage[exchanger_name][pair_title]
 
     async def store_pair_data(self, new_or_update_data: ScraperStorageBackendPairData) -> None:
         if new_or_update_data.exchanger_uniq_name in self.__fake_dict_storage:
@@ -94,15 +123,26 @@ class CurrencyScraperAsyncSafeDictStorage(AbstractScraperStorageBackend):
             return
         self.__fake_dict_storage[new_or_update_data.exchanger_uniq_name] = {
             new_or_update_data.currency_pair_title: new_or_update_data}
+        
+        # Clean up expired data after storing
+        await self._cleanup_expired_data()
 
     async def get_pair_data(
-            self, exchanger_uniq_name: str, pair_title: Optional[str]) -> Union[
+            self,
+            pair_title: Optional[str],
+            exchanger_uniq_name: Optional[str] = None) -> Union[
                 ScraperStorageBackendPairData, Dict[str, ScraperStorageBackendPairData]]:
+        if exchanger_uniq_name is None:
+            return await self.get_all(only_for_pair_title=pair_title)
+        
+        # Clean up expired data before retrieval
+        await self._cleanup_expired_data()
+
         if exchanger_uniq_name in self.__fake_dict_storage:
             result_from_exchanger = self.__fake_dict_storage[exchanger_uniq_name]
             if pair_title is None:
                 # All data record for specified exchanger without passed currency pair title
-                return result_from_exchanger
+                return {exchanger_uniq_name: {p_n: p_d for p_n, p_d in result_from_exchanger.items()}}
             pair_result = result_from_exchanger.get(pair_title)
             if pair_result is not None:
                 # Currency data from specified exchanger and currency pair title
@@ -110,16 +150,19 @@ class CurrencyScraperAsyncSafeDictStorage(AbstractScraperStorageBackend):
         
         # -> Empty result
         data = await super().get_pair_data(
-            pair_title, exchanger_uniq_name)
+            exchanger_uniq_name=exchanger_uniq_name, pair_title=pair_title)
         return data
     
     async def get_all(
             self, only_for_pair_title: Optional[str] = None) -> Dict[
                 str, Dict[str, ScraperStorageBackendPairData]]:
+        
+        # Clean up expired data before retrieval
+        await self._cleanup_expired_data()
+        
         data = self.__fake_dict_storage.copy()
         if only_for_pair_title is None:
             return data
-        logger.info(data)
         return {
             exchanger_uniq_name:
                 pair_dict for exchanger_uniq_name, pair_dict in data.items(

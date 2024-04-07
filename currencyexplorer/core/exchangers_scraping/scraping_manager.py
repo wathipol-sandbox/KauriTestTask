@@ -74,11 +74,13 @@ class ExchangersScrapingManager:
         for scraper in list(self.__scrapers_list.values()):
             yield scraper
 
-    async def update_from_scraper(self, scraper: Union[
-                str, Type[AbstractExchangerScraper], AbstractExchangerScraper]) -> None:
+    async def update_from_scraper(
+            self, scraper: Union[
+                str, Type[AbstractExchangerScraper], AbstractExchangerScraper],
+            pair_title: Optional[str] = None) -> None:
         """ Update currency data from specified scraper """
         scraper_obj = await self.get_scraper(scraper)
-        scraper_response = await scraper_obj.get_currency()
+        scraper_response = await scraper_obj.get_currency(pair_title=pair_title)
         if isinstance(scraper_response, ScraperStorageBackendPairData):
             scraper_response = [scraper_response]
         elif not isinstance(scraper_response, list):
@@ -89,10 +91,10 @@ class ExchangersScrapingManager:
             data.exchanger_uniq_name = str(scraper_obj.EXCHANGER_UNIQ_NAME)
             await self._storage_backend.store_pair_data(data)
 
-    async def update_all(self) -> None:
+    async def update_all(self, pair_title: Optional[str] = None) -> None:
         """ Update currency data from all scrapers """
         for scraper_uniq_name in self.__scrapers_list:
-            await self.update_from_scraper(scraper_uniq_name)
+            await self.update_from_scraper(scraper_uniq_name, pair_title=pair_title)
     
     async def _updater_process(self, scraper: AbstractExchangerScraper, *args, **kwargs) -> None:
         """ Scraper manager flow system wrapper method
@@ -113,6 +115,11 @@ class ExchangersScrapingManager:
     async def run_active_updater(self, *args, **kwargs) -> None:
         """ Run update handler process for all available scrapers """
         for scraper_uniq_name, scraper in self.__scrapers_list.items():
+            if scraper.LISTNER_AUTO_START is False:
+                logger.info("{}: scraper {} listener skip...".format(
+                    self.__class__.__name__, scraper_uniq_name
+                ))
+                continue
             logger.info("{}: creating task for {} updater...".format(
                 self.__class__.__name__, scraper_uniq_name))
             asyncio.create_task(self._updater_process(scraper, *args, **kwargs))
@@ -135,9 +142,16 @@ class ExchangersScrapingManager:
         """
         scraper_obj = await self.get_scraper(scraper)
         data = await self._storage_backend.get_pair_data(
-            scraper_obj.EXCHANGER_UNIQ_NAME, pair_title=pair_title)
+            exchanger_uniq_name=scraper_obj.EXCHANGER_UNIQ_NAME, pair_title=pair_title)
         if isinstance(data, dict):
-            return list(data.values())
+            output = []
+            for i in data.values():
+                if isinstance(i, dict):
+                    for c in i.values():
+                        output.append(c)
+                else:
+                    output.append(i)
+            return output
         elif not isinstance(data, ScraperStorageBackendPairData):
             raise TypeError(
                 "backend storage get method should return scope of ScraperStorageBackendPairData objects")

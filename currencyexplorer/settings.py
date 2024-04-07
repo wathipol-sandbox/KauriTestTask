@@ -17,17 +17,29 @@ class BaseConfig(BaseSettings, ABC):
                                                     worker status on application startup.
         - STOP_SCRAPER_WORKERS_TIMEOUT: float - time in seconds how long we wait after send stop
                                                     workers signal after aplication finish api process.
+        - DEFAULT_WEBSOCKET_UPDATER_FREQUENCY_TIMEOUT: float  - frequency  in seconds of updating the event on
+                                                                WebSocket currency listener connection
+        - MAX_WEBSOCKET_UPDATER_FREQUENCY_TIMEOUT: float - max aviable frequency in seconds for WebSocket
+                                                                currency listener
+        - MIN_WEBSOCKET_UPDATER_FREQUENCY_TIMEOUT: float - min aviable frequency in seconds for WebSocket
+                                                                currency listener
+        - STORED_DATA_LIFETIME_FOR_UPDATE_ATEMP: float - lifetime of data stored in the cache
+                                    if the data is older than this parameter
+                                        in seconds will be made automatically update atemp
+        - WEBSOCKET_UPDATER_CONNECTION_TIMEOUT_LIMIT: int - max aviable lifetime for WebSocket connection in
+                                    currency listener.
     """
     CONFIG_ENVIRONMENT: ClassVar[str]
     model_config = SettingsConfigDict(
         env_file='.env', env_file_encoding='utf-8', extra='ignore')
     DEBUG: Optional[bool] = False
     API_AUTHENTICATION_TOKEN: str
-    WAIT_SCRAPER_WORKERS_TIMEOUT: Optional[float] = 2
-    STOP_SCRAPER_WORKERS_TIMEOUT: Optional[float] = 2
+    WAIT_SCRAPER_WORKERS_TIMEOUT: Optional[float] = 2 # seconds
+    STOP_SCRAPER_WORKERS_TIMEOUT: Optional[float] = 2 # seconds
     DEFAULT_WEBSOCKET_UPDATER_FREQUENCY_TIMEOUT: Optional[float] = 1
     MAX_WEBSOCKET_UPDATER_FREQUENCY_TIMEOUT: Optional[float] = 60
     MIN_WEBSOCKET_UPDATER_FREQUENCY_TIMEOUT: Optional[float] = 0.1
+    STORED_DATA_LIFETIME_FOR_UPDATE_ATEMP: Optional[float] = 10
     WEBSOCKET_UPDATER_CONNECTION_TIMEOUT_LIMIT: Optional[int] = 3000 # 50min
 
     @classmethod

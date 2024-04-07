@@ -32,7 +32,8 @@ async def aplication_flow_lifespan(app: FastAPI):
     await asyncio.sleep(config.WAIT_SCRAPER_WORKERS_TIMEOUT)
     scraper_status_mapping = {
         scraper:
-            scraper.currency_listener_status async for scraper in scrapers_manager.iter_scrapers()}
+            scraper.currency_listener_status async for scraper in scrapers_manager.iter_scrapers(
+                ) if scraper.LISTNER_AUTO_START is True}
     if not all(list(scraper_status_mapping.values())):
         try:
             await scrapers_manager.stop_active_updater()

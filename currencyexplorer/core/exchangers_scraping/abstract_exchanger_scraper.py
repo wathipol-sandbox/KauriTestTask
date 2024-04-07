@@ -13,12 +13,18 @@ class AbstractExchangerScraper(ABC):
     """
 
     EXCHANGER_UNIQ_NAME: ClassVar[str]
+    LISTNER_AUTO_START: ClassVar[bool]
+    DEFAULT_LISTNER_TIMEOUT: ClassVar[float]
 
     def __init__(self) -> None:
         self._worker_stop_signal: Optional[bool] = False
         self._worker_running_status: Optional[bool] = False
 
-    def __init_subclass__(cls, /, *, EXCHANGER_UNIQ_NAME: Optional[str] = None, **kwargs: Any) -> None:
+    def __init_subclass__(
+            cls, /, *,
+            EXCHANGER_UNIQ_NAME: Optional[str] = None,
+            DEFAULT_LISTNER_TIMEOUT: Optional[float] = 0.1,
+            LISTNER_AUTO_START: Optional[bool] = False, **kwargs: Any) -> None:
         if hasattr(cls, "EXCHANGER_UNIQ_NAME") is False and EXCHANGER_UNIQ_NAME is None:
             # Generate exchaner scraper uniq_name from scraper class name if EXCHANGER_UNIQ_NAME not defined
             new_uniq_name = str(cls.__name__).lower()
@@ -27,6 +33,10 @@ class AbstractExchangerScraper(ABC):
             cls.EXCHANGER_UNIQ_NAME = new_uniq_name
         else:
             cls.EXCHANGER_UNIQ_NAME = str(EXCHANGER_UNIQ_NAME)
+        if hasattr(cls, "DEFAULT_LISTNER_TIMEOUT") is False:
+            cls.DEFAULT_LISTNER_TIMEOUT = float(DEFAULT_LISTNER_TIMEOUT)
+        if hasattr(cls, "LISTNER_AUTO_START") is False:
+            cls.LISTNER_AUTO_START = LISTNER_AUTO_START
         return super().__init_subclass__(**kwargs)
 
     @abstractmethod
@@ -52,7 +62,7 @@ class AbstractExchangerScraper(ABC):
     
     async def attach_currency_listener(
             self, *args,
-            delay_seconds: Optional[float] = 0.1, max_update_iteration: Optional[int] = None,
+            delay_seconds: Optional[float] = None, max_update_iteration: Optional[int] = None,
             **kwargs) -> AsyncIterator[List[ScraperStorageBackendPairData] | ScraperStorageBackendPairData]:
         """This method is an asynchronous generator that can be used to actively obtain exchange rates.
                 By default, it uses the get_currency() logic for receiving exchange rates, can be overridden
@@ -64,7 +74,8 @@ class AbstractExchangerScraper(ABC):
         while not self._worker_stop_signal:
             if isinstance(max_update_iteration, int) and max_update_iteration is not None:
                 current_iteration_count += 1
-            await asyncio.sleep(delay_seconds)
+            await asyncio.sleep(
+                delay_seconds if delay_seconds is not None else self.DEFAULT_LISTNER_TIMEOUT)
             data = await self.get_currency(*args, **kwargs)
             yield data
             if isinstance(max_update_iteration, int) and current_iteration_count >= max_update_iteration:
