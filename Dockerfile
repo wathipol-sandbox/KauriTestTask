@@ -20,4 +20,4 @@ ENV ENVIRONMENT="PROD"
 EXPOSE 5000
 
 
-CMD ["gunicorn", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "run:app", "--port", "5000", ,"--timeout", "120"]
+#CMD ["gunicorn", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "run:app", "--port", "5000", ,"--timeout", "120"]

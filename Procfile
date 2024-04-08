@@ -1,1 +1,1 @@
-web: gunicorn -w 1 -k uvicorn.workers.UvicornWorker run:app --timeout 300 
+uvicorn currencyexplorer.main:app --host 0.0.0.0 --port 5000
