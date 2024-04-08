@@ -11,3 +11,4 @@ test.py
 .coverage
 .pytest.xml
 poetry.lock
+test.json

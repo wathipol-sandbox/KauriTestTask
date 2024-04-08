@@ -1,8 +1,6 @@
 import asyncio
 import time
-import json
-from loguru import logger
-from typing import Optional, Union, List, ClassVar, AsyncIterator, Dict
+from typing import Optional, Union, List, AsyncIterator, Dict
 from binance import BinanceSocketManager
 from currencyexplorer import binance_async_client
 from currencyexplorer.core.exchangers_scraping import (
