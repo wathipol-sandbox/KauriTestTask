@@ -19,6 +19,7 @@ python-multipart = "*"
 websockets = "*"
 "python-binance" = "*"
 "httpx" = "*"
+"nest-asyncio" = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
