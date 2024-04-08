@@ -29,6 +29,25 @@
 
 ## Usage Guide
 
+
+## Demo:
+
+The application can be deployed to Google Cloud Run(+ Google Cloud Container Registry) using simple GitHub Actions CI flow
+
+
+API endpoint's aviable from here:
+```
+{link}
+```
+
+
+[Swagger Docs]()
+[Redoc Docs]()
+
+
+> For preview only. Not the best solution to run background workers in GCR
+
+
 ### API usage:
 
 After successful launch of the application, interactive documentation will be available along the path: ```{host}/docs``` or ```{host}/redoc```
