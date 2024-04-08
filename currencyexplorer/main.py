@@ -69,7 +69,14 @@ tags_metadata = [
 
 description = """
 
-## RestAPI Authentication
+## Authentication
+
+Using simple header "Bearer token" authorization.
+
+- Header key: ```Authorization```
+- Header value format: ```Bearer <secret_token>```
+
+> Authorization works the same way for both ща Rest API and the WebSocket API interface
 
 
 ## WebSocket Currency Explorer Listener
