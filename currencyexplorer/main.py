@@ -23,7 +23,6 @@ async def aplication_flow_lifespan(app: FastAPI):
             - Waiting for all worker processes to start before starting API
             - Stop all scraper workers process after API when API shuts down
     """
-    binance_async_client.loop = asyncio.get_running_loop()
     logger.info("Scrapers manager: loading currency rates...")
     await scrapers_manager.update_all()
     logger.info("Scrapers manager: currency rates loaded. Ready for work!")

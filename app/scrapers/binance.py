@@ -57,6 +57,8 @@ class BinanceExchangerCurrencyScraper(
             kwargs["symbol"] = "".join(
                 (pair_list[1], pair_list[0],) if pair_list[0] == "USDT" else pair_list)
             swap_price = pair_list[0] == "USDT"
+
+        binance_async_client.loop = asyncio.get_running_loop()
         ticker_data = await binance_async_client.get_ticker(**kwargs)
         return await self._ticker_response_to_data_list(
             ticker_data,
