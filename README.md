@@ -22,3 +22,40 @@
 1. Implement new child class of scraping operator with data scraping logic based on the specification for scraping operators (see. `./currencyexplorer/core`).
 2. Import new scraper class to `./app/scrapers/__init__.py` file.
 3. The system automatically registers the new operator and data from this source can be requested by API methods ! 
+
+
+### Usage Guide
+
+## Local Build and Run:
+
+1. Сlone this repository and go to it
+2. Touch `.env` file and put inside basic config vars:
+    ```sh
+    ENVIRONMENT="DEV"
+    PORT=<APP CONTAINER PORT FOR EXPOSE>
+    API_AUTHENTICATION_TOKEN="<API BASIC AUTH TOKEN>"
+    ```
+3. Execute: (docker+docker-compose should be installed in your system)
+    ```sh
+    sudo docker-compose -f docker-compose.yml up -d --build
+    ```
+4. Now API and workers should launch successfully and be immediately accessible on the specified port in your local `.env` file
+
+## Installing dependencies outside of docker container:
+
+> Poetry must be installed in your python libary. Recommended version: poetry==1.4.2
+
+**Install:*
+
+```sh
+poetry config virtualenvs.in-project true
+poetry install
+```
+
+## Deploy
+
+The application can be easily deployed in any cloud or VM where docker can be installed. For deployment you need to use the `Dockerfile.prod` Dockerfile.
+
+** Deploy to Google Cloud Run & GAR:** for this you can use a template SH script in the project folder - `push_and_deploy_gcloud.sh`
+
+> It can be launched without changing the script file, but for this you must specified env variables with project number and GAR region.
