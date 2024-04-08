@@ -7,9 +7,9 @@
 
 <hr>
 
-### Service design and structure
+## Service design and structure
 
-## Features:
+### Features:
 
 - **Modular** design: Easy to add support for new exchanges.
 - **Well-defined specifications:** System does not hardcode logic for data scraping. Instead of that app has defines a specification for implementing specific operators to retrieve data from the desired source.
@@ -58,7 +58,7 @@ poetry config virtualenvs.in-project true
 poetry install
 ```
 
-## Deploy
+### Deploy
 
 The application can be easily deployed in any cloud or VM where docker can be installed. For deployment you need to use the `Dockerfile.prod` Dockerfile.
 
