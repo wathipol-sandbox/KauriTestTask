@@ -1,0 +1,21 @@
+name: Build and Deploy app to VM with dokku
+
+on:
+  push:
+    branches:
+      - dokku-release
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Cloning repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: ${{ secrets.SSH_PATH }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
