@@ -21,4 +21,4 @@ ENV ENVIRONMENT="PROD"
 EXPOSE ${PORT}
 
 
-CMD ["uvicorn", "currencyexplorer.main:app", "--host", "0.0.0.0", "--port", "${PORT}"]
+CMD ["uvicorn", "currencyexplorer.main:app", "--host", "0.0.0.0", "--port", "echo ${PORT}"]
