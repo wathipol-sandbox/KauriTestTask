@@ -7,8 +7,7 @@
 
 <hr>
 
-
-##№ Service design and structure
+### Service design and structure
 
 ## Features:
 
@@ -17,3 +16,9 @@
 - **Pluggable backends:** Support for different storage solutions.
 - **Asyncio safe:** Safe to use in asynchronous applications.
 
+
+### How to add new data sources?
+
+1. Implement new child class of scraping operator with data scraping logic based on the specification for scraping operators (see. `./currencyexplorer/core`).
+2. Import new scraper class to `./app/scrapers/__init__.py` file.
+3. The system automatically registers the new operator and data from this source can be requested by API methods ! 
