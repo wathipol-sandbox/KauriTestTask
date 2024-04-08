@@ -26,6 +26,12 @@
 
 ### Usage Guide
 
+## API usage:
+
+After successful launch of the application, interactive documentation will be available along the path: ```{host}/docs``` or ```{host}/redoc```
+
+> The Swager documentation in the header also contains a description of how to work with the WebSocket interface for receiving API data.
+
 ## Local Build and Run:
 
 1. Сlone this repository and go to it
@@ -45,7 +51,7 @@
 
 > Poetry must be installed in your python libary. Recommended version: poetry==1.4.2
 
-**Install:*
+**Install:**
 
 ```sh
 poetry config virtualenvs.in-project true
