@@ -1,10 +1,9 @@
-name: Deploy to Google Cloud Run
+name: Build and Push app image to Google Cloud
 
 on:
   push:
     branches:
-      - release
-      - 'release-*.*.*'
+      - gcloud-sync
 
 jobs:
   deploy:
@@ -35,12 +34,5 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/kauri-test:${{ steps.branch-names.outputs.current_branch }}-${{  github.sha }} -f Dockerfile.prod .
+        docker build -t gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/kauri-test:${{ steps.branch-names.outputs.current_branch }}-${{  github.sha }} -f Dockerfile .
         docker push gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/kauri-test:${{ steps.branch-names.outputs.current_branch }}-${{  github.sha }}
-
-    - name: Deploy to Google Cloud Run
-      run: |
-        gcloud run deploy kauri-test \
-          --image gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/kauri-test:${{ steps.branch-names.outputs.current_branch }}-${{  github.sha }} \
-          --platform managed \
-          --region europe-central2
