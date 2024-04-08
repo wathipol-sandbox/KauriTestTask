@@ -24,9 +24,9 @@
 3. The system automatically registers the new operator and data from this source can be requested by API methods ! 
 
 
-### Usage Guide
+## Usage Guide
 
-## API usage:
+### API usage:
 
 After successful launch of the application, interactive documentation will be available along the path: ```{host}/docs``` or ```{host}/redoc```
 
@@ -62,6 +62,6 @@ poetry install
 
 The application can be easily deployed in any cloud or VM where docker can be installed. For deployment you need to use the `Dockerfile.prod` Dockerfile.
 
-** Deploy to Google Cloud Run & GAR:** for this you can use a template SH script in the project folder - `push_and_deploy_gcloud.sh`
+**Deploy to Google Cloud Run & GAR:** for this you can use a template SH script in the project folder - `push_and_deploy_gcloud.sh`
 
 > It can be launched without changing the script file, but for this you must specified env variables with project number and GAR region.
