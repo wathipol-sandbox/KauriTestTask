@@ -32,7 +32,7 @@
 
 ## Demo:
 
-The application can be deployed to Google Cloud Run(+ Google Cloud Container Registry) using simple GitHub Actions CI flow
+The application can be deployed to Google Cloud Run(+ Google Cloud Container Registry) using simple GitHub Actions CI flow. Will be be aviable only for few days for preview access.
 
 
 API endpoint's aviable from here:
