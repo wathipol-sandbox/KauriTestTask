@@ -13,11 +13,11 @@ RUN poetry config virtualenvs.create false
 RUN poetry install --without dev --no-root
 
 ARG ENVIRONMENT="PROD"
-ARG PORT
+ARG PORT=5000
 
 ENV PYTHONPATH "${PYTHONPATH}:/src"
 ENV ENVIRONMENT="PROD"
 EXPOSE 5000
 
 
-#CMD ["gunicorn", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "run:app", "--port", "5000", ,"--timeout", "120"]
+CMD ["uvicorn", "currencyexplorer.main:app", "--host" "0.0.0.0", "--port", "5000"]
