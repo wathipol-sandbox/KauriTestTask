@@ -35,7 +35,7 @@ After successful launch of the application, interactive documentation will be av
 
 > The Swager documentation in the header also contains a description of how to work with the WebSocket interface for receiving API data.
 
-## Local Build and Run:
+### Local Build and Run:
 
 1. Сlone this repository and go to it
 2. Touch `.env` file and put inside basic config vars:
