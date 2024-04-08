@@ -18,7 +18,7 @@ ARG PORT
 ENV PYTHONPATH "${PYTHONPATH}:/src"
 ENV ENVIRONMENT="PROD"
 
-EXPOSE ${PORT}
+EXPOSE 8000
 
 
-CMD ["uvicorn", "currencyexplorer.main:app", "--host", "0.0.0.0", "--port", "echo ${PORT}"]
+CMD ["uvicorn", "currencyexplorer.main:app", "--host", "0.0.0.0"]
