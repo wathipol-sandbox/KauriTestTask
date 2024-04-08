@@ -90,9 +90,6 @@ The web socket for listening to the course from exchanges is available at the fo
 {websocket_endpoint}
 ```
 
-#### Authentication
-> Authorization for working with WebSocket listener repeats RestAPI authorization except that the secret token must be passed directly in the request path (instead of headers values )
-
 Example:
 ```
 {websocket_endpoint_with_auth}
