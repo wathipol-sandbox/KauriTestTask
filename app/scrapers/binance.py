@@ -36,14 +36,14 @@ class BinanceExchangerCurrencyScraper(
             avr_price = None
             if use_binance_average_price is not True:
                 ask_price = ticker[message_title_mapping.get("askPrice", "askPrice")]
-                bid_price = ticker[message_title_mapping.get("askPrice", "askPrice")]
+                bid_price = ticker[message_title_mapping.get("bidPrice", "bidPrice")]
                 avr_price = (float(ask_price) + float(bid_price)) / 2
             else:
                 avr_price = ticker[message_title_mapping.get("WeightedAvgPrice", "WeightedAvgPrice")]
             new_data = ScraperStorageBackendPairData(
                 exchanger_uniq_name=self.EXCHANGER_UNIQ_NAME,
                 currency_pair_title=symbol,
-                currency_rate=avr_price if not swap_price else 1 / avr_price,
+                currency_rate=avr_price if (not swap_price or avr_price == 0) else 1 / avr_price,
                 last_update=time.time()
             )
             data_list.append(new_data)

@@ -158,9 +158,17 @@ class CurrencyScraperAsyncSafeDictStorage(AbstractScraperStorageBackend):
         data = self.__fake_dict_storage.copy()
         if only_for_pair_title is None:
             return data
-        return {
-            exchanger_uniq_name:
-                pair_dict for exchanger_uniq_name, pair_dict in data.items(
-                    ) if all(
-                        [pair_name == only_for_pair_title for pair_name, pair_data in pair_dict.items()])
+        pair_found_in_exchangers = {
+            exchanger_name: currency_object
+            for exchanger_name, symbol_dict in data.items()
+            for symbol, currency_object in symbol_dict.items()
+            if symbol == only_for_pair_title
         }
+
+        # Formating valid return object
+        response = {}
+        for target_exchanger, e_data in pair_found_in_exchangers.items():
+            if target_exchanger not in response:
+                response[target_exchanger] = {}
+            response[target_exchanger][only_for_pair_title] = e_data
+        return response

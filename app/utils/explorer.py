@@ -5,7 +5,7 @@ from app.schemas.explorer import GetExplorerInfoResponse
 
 class ScraperManagerGetter:
     """
-        Simple wrapper for easy reload value from scraping manager with specified params
+        Simple wrapper adapter util for easy reload value from scraping manager with specified params
     """
     def __init__(
             self, exchange: str | None, pair: str | None,
@@ -13,6 +13,7 @@ class ScraperManagerGetter:
         self.exchange = exchange
         self.pair = pair
         self.update_atemp_if_not_exist = update_atemp_if_not_exist
+        self.update_atemp_if_not_all_source = True
     
     async def get(self, skip_update_atemp: bool | None = False):
         """ Make explorer response from scraping manager """
@@ -47,6 +48,20 @@ class ScraperManagerGetter:
                 logger.info("{}: {} not found in {} exchange! Update atemp...".format(
                     self.__class__.__name__, self.pair, self.exchange
                 ))
+                if self.exchange is not None:
+                    await scrapers_manager.update_from_scraper(self.exchange, pair_title=self.pair)
+                else:
+                    await scrapers_manager.update_all(pair_title=self.pair)
+                return await self.get(skip_update_atemp=True)
+        
+        elif len(data) > 0 and len(data) < scrapers_manager.scrapers_count and (
+                self.update_atemp_if_not_all_source is True and self.update_atemp_if_not_exist is True):
+            if skip_update_atemp is True:
+                logger.info("{}: not all sources has data, but update atemp failed!".format(
+                        self.__class__.__name__))
+            else:
+                logger.info("{}: not all sources has data, update atemp...".format(
+                        self.__class__.__name__))
                 if self.exchange is not None:
                     await scrapers_manager.update_from_scraper(self.exchange, pair_title=self.pair)
                 else:

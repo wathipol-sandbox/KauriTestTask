@@ -73,6 +73,10 @@ class ExchangersScrapingManager:
         """
         for scraper in list(self.__scrapers_list.values()):
             yield scraper
+    
+    @property
+    def scrapers_count(self) -> int:
+        return len(self.__scrapers_list)
 
     async def update_from_scraper(
             self, scraper: Union[

@@ -18,6 +18,7 @@ pytz = "^2022.1"
 python-multipart = "*"
 websockets = "*"
 "python-binance" = "*"
+"httpx" = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
