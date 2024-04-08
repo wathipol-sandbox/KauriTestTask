@@ -34,8 +34,6 @@
 
 App is ready to launch on Google Cloud Run, but at the moment app deployed on simple VM using Dokku (additional configuration is required for using Binance API in GCR, because some IP ranges is prohibited by Binance policy). 
 
-> DEMO Prod for preview only. Images has not been tested and is not a real production flow
-
 API endpoint's aviable from here:
 ```
 https://kauri-test.wathipol.sa.com/
@@ -43,6 +41,8 @@ https://kauri-test.wathipol.sa.com/
 
 [Swagger Docs](https://kauri-test.wathipol.sa.com/docs)
 [Redoc Docs](https://kauri-test.wathipol.sa.com/redoc)
+
+> DEMO Prod for preview only. Images has not been tested and is not a real production flow
 
 
 ### API usage:
