@@ -5,6 +5,9 @@
 
 **Target:** Create a system that easily and quickly integrates with new exchanges without need to changing the flow of the application every time when we need add new exchanger as a data source.
 
+
+* The project code base looks pretty big for test task, so I would be very grateful for constructive **feedback** from another developer if someone decides to look at my code
+
 <hr>
 
 ## Service design and structure
