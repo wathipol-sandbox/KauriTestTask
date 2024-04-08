@@ -3,21 +3,21 @@
 #############################################
 FROM tiangolo/uvicorn-gunicorn:python3.11-slim
 
-
+WORKDIR /src
 COPY ${PWD}/pyproject.toml ./pyproject.toml
+COPY ./ /src
+
 RUN pip install --upgrade pip
 RUN pip install poetry==1.4.2
 RUN poetry config virtualenvs.create false
 RUN poetry install --without dev --no-root
-#RUN pip install --force-reinstall  email-validator==2.0.0
 
 ARG ENVIRONMENT="PROD"
 ARG PORT
 
-ENV PYTHONPATH "${PYTHONPATH}:/app"
+ENV PYTHONPATH "${PYTHONPATH}:/src"
 ENV ENVIRONMENT="PROD"
-ENV PORT=8080
-EXPOSE 8080
+EXPOSE 8000
 
 
-CMD ["uvicorn", "currencyexplorer.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["gunicorn", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "run:app", "--timeout", "120"]
