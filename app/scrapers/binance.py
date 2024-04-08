@@ -1,6 +1,5 @@
 import asyncio
 import time
-import nest_asyncio
 from typing import Optional, Union, List, AsyncIterator, Dict
 from binance import BinanceSocketManager
 from currencyexplorer import binance_async_client
@@ -60,11 +59,6 @@ class BinanceExchangerCurrencyScraper(
             kwargs["symbol"] = "".join(
                 (pair_list[1], pair_list[0],) if pair_list[0] == "USDT" else pair_list)
             swap_price = pair_list[0] == "USDT"
-
-        # Detect running loop and apply fro aihttp binance client
-        use_loop = asyncio.get_running_loop()
-        binance_async_client.loop = use_loop
-        nest_asyncio.apply(use_loop)
 
         ticker_data = await binance_async_client.get_ticker(**kwargs)
         return await self._ticker_response_to_data_list(
