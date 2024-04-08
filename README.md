@@ -45,9 +45,6 @@ https://kauri-test.wathipol.sa.com/
 [Redoc Docs](https://kauri-test.wathipol.sa.com/redoc)
 
 
-> Google Cloud Run **Not** the best solution to run ASGI application with background workers
-
-
 ### API usage:
 
 After successful launch of the application, interactive documentation will be available along the path: ```{host}/docs``` or ```{host}/redoc```
@@ -84,7 +81,6 @@ poetry install
 
 #### Deploy to Google Cloud Run & GAR
 For this you can use a template SH script in the project folder - `push_and_deploy_gcloud.sh`
-
 
 > Google Cloud Run **Not** the best solution to run ASGI application with background workers
 > It can be launched without changing the script file, but for this you must specified env variables with project number and GAR region.
