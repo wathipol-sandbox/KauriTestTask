@@ -32,20 +32,20 @@
 
 ## Demo:
 
-The application can be deployed to Google Cloud Run(+ Google Cloud Container Registry) using simple GitHub Actions CI flow. Will be be aviable only for few days for preview access.
+App is ready to launch on Google Cloud Run, but at the moment app deployed on simple VM using Dokku (additional configuration is required for using Binance API in GCR, because some IP ranges is prohibited by Binance policy). 
 
+> DEMO Prod for preview only. Images has not been tested and is not a real production flow
 
 API endpoint's aviable from here:
 ```
-{link}
+https://kauri-test.wathipol.sa.com/
 ```
 
+[Swagger Docs](https://kauri-test.wathipol.sa.com/docs)
+[Redoc Docs](https://kauri-test.wathipol.sa.com/redoc)
 
-[Swagger Docs]()
-[Redoc Docs]()
 
-
-> For preview only. Not the best solution to run background workers in GCR
+> Google Cloud Run **Not** the best solution to run ASGI application with background workers
 
 
 ### API usage:
@@ -80,10 +80,24 @@ poetry config virtualenvs.in-project true
 poetry install
 ```
 
-### Deploy
+### Deploy:
 
-The application can be easily deployed in any cloud or VM where docker can be installed. For deployment you need to use the `Dockerfile.prod` Dockerfile.
+#### Deploy to Google Cloud Run & GAR
+For this you can use a template SH script in the project folder - `push_and_deploy_gcloud.sh`
 
-**Deploy to Google Cloud Run & GAR:** for this you can use a template SH script in the project folder - `push_and_deploy_gcloud.sh`
 
+> Google Cloud Run **Not** the best solution to run ASGI application with background workers
 > It can be launched without changing the script file, but for this you must specified env variables with project number and GAR region.
+
+
+#### Deploy to Dokku VM
+For this you can use a simple push to `dokku-release` branch of GitHub repository and  build with deployment will be automatically triggered
+
+
+#### Push container to Google Cloud Container Registry from GitHub Actions
+For this you can use a simple push to `gcloud-sync` branch of GitHub repository and build will be automatically triggered and then container image will be pushed to GCloud Container Registry
+
+> Recommended to use Google Artifact Registry service instead of Google Cloud Container Registry because ontainer Registry will be unsupported soon. 
+
+
+
